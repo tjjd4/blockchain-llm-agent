@@ -1,0 +1,38 @@
+{
+  "title": "Token Swap Transaction Schema",
+  "type": "object",
+  "properties": {
+    "fromAsset": {
+      "type": "string",
+      "enum": ["$WETH", "$USDC", "$DAI"]
+    },
+    "toAsset": {
+      "type": "string",
+      "enum": ["$WETH", "$USDC", "$DAI"]
+    },
+    "amount": {
+      "type": "number"
+    },
+    "chain": {
+      "type": "string",
+      "enum": ["sepolia", "mainnet", "base"],
+      "description": "The blockchain network where the transfer will occur."
+    },
+    "fromAddress": {
+      "type": "string",
+      "description": "The blockchain address of the sender."
+    },
+    "toAddress": {
+      "type": "string",
+      "description": "The blockchain address of the recipient."
+    }
+  },
+  "required": [
+    "fromAsset",
+    "toAsset",
+    "amount",
+    "chain",
+    "fromAddress",
+    "toAddress"
+  ]
+}
