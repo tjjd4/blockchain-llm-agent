@@ -25,8 +25,8 @@ async def main():
         If it is not, you should say that you do not know.
         """,
         llm_config=llm_config,
-        mcp_server_command="npx",
-        mcp_server_args=["-y","@mcpdotdirect/evm-mcp-server"],
+        mcp_server_command="node",
+        mcp_server_args=["app/mcp/goat-model-context-protocol/build/evm.js"],
         env={
             "WALLET_PRIVATE_KEY": "0x51897b64e85c3f714bba707e867914295a1377a7463a9dae8ea6a8b914246319",
             "RPC_PROVIDER_URL": "https://eth-mainnet.public.blastapi.io"
