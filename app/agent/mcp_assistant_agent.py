@@ -41,74 +41,74 @@ class MCPAssistantAgent(ConversableAgent):
             command=mcp_server_command, args=mcp_server_args or [], env=env
         )
 
-        @self.register_for_llm(description="Read content from a MCP resource")
-        async def read_resource(uri: str) -> str:
-            """Read content from an MCP resource.
+        # @self.register_for_llm(description="Read content from a MCP resource")
+        # async def read_resource(uri: str) -> str:
+        #     """Read content from an MCP resource.
 
-            Args:
-                uri: The URI of the resource (format: storage://local/path)
+        #     Args:
+        #         uri: The URI of the resource (format: storage://local/path)
 
-            Returns:
-                str: The content of the resource
+        #     Returns:
+        #         str: The content of the resource
 
-            Raises:
-                Exception: If reading the resource fails
-            """
-            try:
-                async with stdio_client(self.server_params) as (read, write):
-                    async with ClientSession(read, write) as session:
-                        await session.initialize()
-                        return await session.read_resource(uri)
-            except Exception as e:
-                return f"Error reading resource: {str(e)}"
+        #     Raises:
+        #         Exception: If reading the resource fails
+        #     """
+        #     try:
+        #         async with stdio_client(self.server_params) as (read, write):
+        #             async with ClientSession(read, write) as session:
+        #                 await session.initialize()
+        #                 return await session.read_resource(uri)
+        #     except Exception as e:
+        #         return f"Error reading resource: {str(e)}"
 
-        @self.register_for_llm(description="Call a tool to perform an operation")
-        async def call_tool(name: str, args: dict) -> Any:
-            """Call an MCP tool with the specified arguments.
+        # @self.register_for_llm(description="Call a tool to perform an operation")
+        # async def call_tool(name: str, args: dict) -> Any:
+        #     """Call an MCP tool with the specified arguments.
 
-            Args:
-                name: Name of the tool to call
-                args: Arguments to pass to the tool
+        #     Args:
+        #         name: Name of the tool to call
+        #         args: Arguments to pass to the tool
 
-            Returns:
-                Any: The result of the tool operation
+        #     Returns:
+        #         Any: The result of the tool operation
 
-            Raises:
-                Exception: If the tool call fails
-            """
-            try:
-                async with stdio_client(self.server_params) as (read, write):
-                    async with ClientSession(read, write) as session:
-                        await session.initialize()
-                        result = await session.call_tool(name, args)
-                        if not result:
-                            return {"status": "success"}
-                        return result
-            except Exception as e:
-                return f"Error calling tool: {str(e)}"
+        #     Raises:
+        #         Exception: If the tool call fails
+        #     """
+        #     try:
+        #         async with stdio_client(self.server_params) as (read, write):
+        #             async with ClientSession(read, write) as session:
+        #                 await session.initialize()
+        #                 result = await session.call_tool(name, args)
+        #                 if not result:
+        #                     return {"status": "success"}
+        #                 return result
+        #     except Exception as e:
+        #         return f"Error calling tool: {str(e)}"
 
-        @self.register_for_llm(description="List available tools")
-        async def list_tools() -> list[dict[str, Any]]:
-            """Discover available tools from the MCP server.
+        # @self.register_for_llm(description="List available tools")
+        # async def list_tools() -> list[dict[str, Any]]:
+        #     """Discover available tools from the MCP server.
 
-            Returns:
-                list[dict[str, Any]]: List of available tools and their schemas
+        #     Returns:
+        #         list[dict[str, Any]]: List of available tools and their schemas
 
-            Raises:
-                Exception: If tool discovery fails
-            """
-            try:
-                async with stdio_client(self.server_params) as (read, write):
-                    async with ClientSession(read, write) as session:
-                        await session.initialize()
-                        return await session.list_tools()
-            except Exception as e:
-                print(f"Error listing tools: {e}")
-                raise
+        #     Raises:
+        #         Exception: If tool discovery fails
+        #     """
+        #     try:
+        #         async with stdio_client(self.server_params) as (read, write):
+        #             async with ClientSession(read, write) as session:
+        #                 await session.initialize()
+        #                 return await session.list_tools()
+        #     except Exception as e:
+        #         print(f"Error listing tools: {e}")
+        #         raise
 
-        self.read_resource = read_resource
-        self.call_tool = call_tool
-        self.list_tools = list_tools
+        # self.read_resource = read_resource
+        # self.call_tool = call_tool
+        # self.list_tools = list_tools
 
     async def initialize(self):
         """Initialize the MCP toolkit connection.
@@ -132,6 +132,5 @@ class MCPAssistantAgent(ConversableAgent):
                     toolkit = await create_toolkit(session=session)
 
                     toolkit.register_for_llm(self)
-                    toolkit.register_for_execution(self)
         except Exception as e:
             return f"Error adding toolkit: {str(e)}"

@@ -1,15 +1,13 @@
-from autogen import AssistantAgent
+from autogen import ConversableAgent
 
-class MathAgent(AssistantAgent):
-    def __init__(self, toolkit):
+class MathAgent(ConversableAgent):
+    def __init__(self):
         super().__init__(
             name="math_agent",
             system_message="""
             You are a smart math assistant.
-            You have access to:
-            - MCP tools: add(a, b), multiply(a, b)
-            - A local tool: is_even(n)
-            Use tools as needed. Do not guess. Respond clearly.
+            Use tools registered in self as needed. Do not guess. Respond clearly.
+            You can execute tools by calling them.
             """,
             llm_config={
                 "config_list": [
@@ -19,10 +17,12 @@ class MathAgent(AssistantAgent):
                     }
                 ]
             },
+            code_execution_config={
+                "use_docker": False
+            },
         )
 
-        toolkit.register_for_llm(self)
-
-        @self.register_for_llm(name="is_even", description="Return '1' if the number is even, else '0'")
+        @self.register_for_llm(name="is_even", description="Return '1' if the number is even, else is odd and return '0'")
+        @self.register_for_execution(name="is_even", description="Return '1' if the number is even, else is odd and return '0'")
         def is_even(n: int) -> str:
             return "1" if n % 2 == 0 else "0"
