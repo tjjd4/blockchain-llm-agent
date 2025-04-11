@@ -7,7 +7,7 @@ from app.agent.mcp_executor_agent import MCPExecutorAgent
 llm_config = LLMConfig(
     config_list=[
         {
-            "model": "llama3.2:latest",
+            "model": "mistral-nemo:12b-instruct-2407-q2_K",
             "api_type": "ollama",
         }
     ]
@@ -33,6 +33,7 @@ async def main():
         }
     )
     await assistant_agent.initialize()
+    # print("MCP Tools: ", assistant_agent.llm_config.tools)
 
     executor_agent = MCPExecutorAgent(
         name="mcp_executor_agent",

@@ -3,11 +3,12 @@ from autogen import UserProxyAgent, GroupChat, GroupChatManager, LLMConfig
 
 from app.agent.mcp_assistant_agent import MCPAssistantAgent
 from app.agent.mcp_executor_agent import MCPExecutorAgent
+from app.utils.messages import get_mcp_system_message
 
 llm_config = LLMConfig(
     config_list=[
         {
-            "model": "llama3.2:latest",
+            "model": "mistral-nemo:12b-instruct-2407-q2_K",
             "api_type": "ollama",
         }
     ]
@@ -17,18 +18,13 @@ llm_config = LLMConfig(
 async def main():
     assistant_agent = MCPAssistantAgent(
         name="mcp_assistant_agent",
-        system_message="""
-        You are a crypto expert. 
-        You can use the tools provided to you to answer questions.
-        You are given a message and you need to determine if it is a crypto related question. 
-        If it is, you should use the tools to answer the question. 
-        If it is not, you should say that you do not know.
-        """,
+        system_message=get_mcp_system_message()['content'],
         llm_config=llm_config,
         mcp_server_command="node",
         mcp_server_args=["app/mcp/evm-mcp-server/build/index.js"],
     )
     await assistant_agent.initialize()
+
 
     executor_agent = MCPExecutorAgent(
         name="mcp_executor_agent",
@@ -38,19 +34,19 @@ async def main():
         You will use the tools provided to you to execute the call.
         You will return the result of the call.
         """,
-        llm_config=llm_config,
         mcp_server_command="node",
         mcp_server_args=["app/mcp/evm-mcp-server/build/index.js"],
     )
     await executor_agent.initialize()
 
-    user = UserProxyAgent(
-        name = "user", 
+    user_agent = UserProxyAgent(
+        name = "user_agent", 
         human_input_mode = "NEVER",
         code_execution_config = {
             "use_docker": False
         },
     )
+    
 
     groupchat = GroupChat(
         agents=[assistant_agent, executor_agent],
@@ -60,12 +56,13 @@ async def main():
 
     manager = GroupChatManager(groupchat=groupchat)
 
-    result = user.run(
+    result = user_agent.run(
         manager=manager,
         recipient=manager,
-        message="How many USDC does 0x860201656ece07cb8d5133dd704bb6f10a09fe93 have?",
-        tools=assistant_agent.tools,
-        max_turns=4)
+        message="How much USDC does 0x860201656ece07cb8d5133dd704bb6f10a09fe93 have?",
+        max_turns=4,
+        user_input=False
+    )
 
     result.process()
     print(result.summary)
