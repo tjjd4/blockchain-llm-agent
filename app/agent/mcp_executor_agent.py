@@ -4,7 +4,9 @@ from mcp.client.session import ClientSession
 from autogen.mcp import create_toolkit
 from typing import Optional, List, Any
 
-class MCPExecutorAgent(ConversableAgent):
+from .base_agent import BaseAgent
+
+class MCPExecutorAgent(BaseAgent):
     def __init__(
         self,
         name: str,
