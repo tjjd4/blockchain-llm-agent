@@ -8,7 +8,7 @@ from app.agent.math_agent import MathAgent
 llm_config = LLMConfig(
     config_list=[
         {
-            "model": "llama3.2:latest",
+            "model": "mistral-nemo:12b-instruct-2407-q2_K",
             "api_type": "ollama",
         }
     ]
@@ -16,33 +16,15 @@ llm_config = LLMConfig(
     
 
 async def main():
-    math_agent = MathAgent()
-
-    assistant_agent = AssistantAgent(
-        name="assistant_agent",
-        system_message="""
-        You are a smart math assistant.
-        Use tools registered in self as needed. Do not guess. Respond clearly.
-        You can execute tools by calling them.
-        """,
-        llm_config=llm_config,
-        code_execution_config={
-            "use_docker": False
-        },
-    )
-
-    user = UserProxyAgent(
-        name = "user", 
-        human_input_mode = "NEVER",
-        code_execution_config = {
-            "use_docker": False
-        },
+    math_agent = MathAgent(
+        name="math_agent",
+        llm_config=llm_config
     )
 
     # when using run(), if recipient is None or not provided,
     # it will default generate a executor to execute the tools specified in `tools` parameter
     result = math_agent.run(
-        message="Is 4302237510 even?", 
+        message="8466546 + 103294394?", 
         tools=math_agent.tools,
         max_turns=4)
 
