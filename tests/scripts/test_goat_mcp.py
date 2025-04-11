@@ -12,7 +12,6 @@ llm_config = LLMConfig(
         }
     ]
 )
-    
 
 async def main():
     assistant_agent = MCPAssistantAgent(
