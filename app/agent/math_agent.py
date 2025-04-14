@@ -1,6 +1,6 @@
-from autogen import ConversableAgent
+from .base_agent import BaseAgent
 
-class MathAgent(ConversableAgent):
+class MathAgent(BaseAgent):
     def __init__(
         self,
         name: str,
