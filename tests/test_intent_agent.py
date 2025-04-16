@@ -2,7 +2,7 @@ import asyncio
 import json
 from autogen import UserProxyAgent
 
-from app.agent.intent_agent import IntentAgent
+from src.agent.intent_agent import IntentAgent
 
 def is_termination_msg(message: dict) -> bool:
         try:
