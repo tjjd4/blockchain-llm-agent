@@ -25,7 +25,8 @@ LLM_PROMPTS = {
     - Do not generate or infer extra fields.
     - Do not assume what kind of transaction or query it is.
     - Focus on faithfully extracting and structuring what's provided.
-
+    - If the user's request is not related to blockchain, return an empty object.
+    
     Example 1:
     Input: "Transfer 5 USDC to 0xdef456 on Arbitrum"
     Output:
@@ -46,6 +47,19 @@ LLM_PROMPTS = {
         "intent": "User wants to check their DAI balance on Optimism.",
         "info": {
             "token": "DAI",
+            "chain": "Optimism"
+        }
+    }
+
+    Example 3:
+    Input: "If I have more than 10 DAI, send 10 DAI to 0xdef456"
+    Output:
+    {
+        "intent": "User wants to send 10 DAI to an address if user has more than 10 DAI on Optimism.",
+        "info": {
+            "token": "DAI",
+            "amount": 10,
+            "to": "0xdef456",
             "chain": "Optimism"
         }
     }

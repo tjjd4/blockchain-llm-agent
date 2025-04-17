@@ -15,18 +15,18 @@ async def test_intent_agent_transfer():
     user = UserProxyAgent(
         name="user", 
         max_consecutive_auto_reply=0,
-        human_input_mode="TERMINATE",
+        human_input_mode="NEVER",
         code_execution_config = {
             "use_docker": False
         },
+        is_termination_msg=is_termination_msg,
+
     )
-    intent_agent = IntentAgent(
-        is_termination_msg=is_termination_msg
-    )
+    intent_agent = IntentAgent()
 
     result = user.initiate_chat(
         recipient=intent_agent,
-        message="Do I have 1000 USDC on Optimism?",
+        message="Do I have 10 DAI on Optimism? My address is 0x1234567890123456789012345678901234567890, I want to send 10 DAI to peter, his address is peter.eth",
         max_turns=6,
     )
     print(result.summary)
