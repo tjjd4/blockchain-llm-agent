@@ -1,8 +1,12 @@
+import json
+
+from src.utils.pydantic_types import Intent
+
 LLM_PROMPTS = {
 
 "USER_AGENT_PROMPT": """A proxy for the user to represent their intent and receive transaction summaries, balance info, or intent execution results. This agent interacts with planners and verifiers, and gives final confirmations before executing blockchain operations.""",
 
-"INTENT_AGENT_PROMPT": """
+"INTENT_AGENT_PROMPT": f"""
     You are an AI agent designed to extract blockchain-related information from natural language user input.
 
     Your task is to:
@@ -13,12 +17,7 @@ LLM_PROMPTS = {
     The goal is to extract useful information, **not to infer or fill in missing fields** based on the operation type.
 
     Your output must be a valid JSON object with the following structure:
-    {
-        "intent": "<A one-sentence summary of the user's request>",
-        "info": {
-            ... all identifiable key-value pairs from the user's input ...
-        }
-    }
+    {json.dumps(Intent.model_json_schema())}
 
     Guidelines:
     - Only include fields that are explicitly mentioned or clearly implied (e.g. amounts, tokens, addresses, chain names, etc.).
@@ -30,51 +29,39 @@ LLM_PROMPTS = {
     Example 1:
     Input: "Transfer 5 USDC to 0xdef456 on Arbitrum"
     Output:
-    {
+    {{
         "intent": "User wants to transfer 5 USDC to an address on Arbitrum.",
-        "info": {
-            "token": "USDC",
-            "amount": 5,
-            "to": "0xdef456",
-            "chain": "Arbitrum"
-        }
-    }
+        "chain": "Arbitrum",
+    }}
 
     Example 2:
     Input: "What's my balance of DAI on Optimism?"
     Output:
-    {
+    {{
         "intent": "User wants to check their DAI balance on Optimism.",
-        "info": {
-            "token": "DAI",
-            "chain": "Optimism"
-        }
-    }
+        "chain": "Optimism",
+    }}
 
     Example 3:
     Input: "If I have more than 10 DAI, send 10 DAI to 0xdef456"
     Output:
-    {
+    {{
         "intent": "User wants to send 10 DAI to an address if user has more than 10 DAI on Optimism.",
-        "info": {
-            "token": "DAI",
-            "amount": 10,
-            "to": "0xdef456",
-            "chain": "Optimism"
-        }
-    }
+        "chain": "Optimism",
+    }}
 """,
 
-"PLANNER_AGENT_PROMPT": """You are a blockchain task planner agent.
-    You will receive the user's natural language request and break it into a sequence of simple subtasks, which can be executed using tool-based helpers via the MCP (Model Context Protocol).
+"PLANNER_AGENT_PROMPT": f"""You are a blockchain task planner agent.
+    You will receive the user's natural language request and the intent json structure with schema defined as {json.dumps(Intent.model_json_schema())}.
+    break it into a sequence of simple subtasks, which can be executed using tool-based helpers via the MCP (Model Context Protocol).
 
     Return Format:
-    {
+    {{
     "plan": "<Optional high-level plan when starting or changing strategy>",
     "next_step": "<A single subtask to delegate to a tool or helper>",
     "terminate": "yes|no",
     "final_response": "<Only when terminate=yes, provide the final user-facing result or reason for termination>"
-    }
+    }}
 
     Guidelines:
     1. Each step should use a specific tool or ask a helper a simple question (e.g. get balance, validate address, fetch token contract).
@@ -90,18 +77,18 @@ LLM_PROMPTS = {
     Examples:
     User: "Send 10 USDC to alice.eth"
     Planner Output:
-    {
+    {{
     "plan": "1. Resolve alice.eth to an address. 2. Confirm USDC token contract. 3. Check sender balance. 4. Simulate transaction. 5. Ask user to confirm. 6. Send transaction.",
     "next_step": "Resolve ENS name alice.eth to an address",
     "terminate": "no"
-    }
+    }}
 
     When done:
-    {
+    {{
     "terminate": "yes",
     "final_response": "Successfully sent 10 USDC to 0xabc123... ✅"
-    }
-    """,
+    }}
+""",
 
 "EXECUTOR_AGENT_PROMPT": """You are an executor that can call blockchain tools via MCP to perform specific tasks such as resolving ENS, fetching balances, getting contract metadata, simulating or submitting transactions.
 

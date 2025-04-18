@@ -1,13 +1,31 @@
-from typing import Dict, List
+from autogen import LLMConfig
 
-from .base_agent import BaseAgent
+from .base_ag2_agent import BaseAgent
+from src.utils.prompt import LLM_PROMPTS
+from src.utils.config import Config
+
+
+ollama_llm_config = LLMConfig(
+    model= "mistral-nemo:12b-instruct-2407-q2_K",
+    api_type= "ollama",
+)
+
+openai_llm_config = LLMConfig(
+    model= "gpt-4o-mini",
+    api_type= "openai",
+    api_key= Config.OPENAI_API_KEY,
+)
+
 
 class PlannerAgent(BaseAgent):
     def __init__(self, **kwargs):
-        system_message = (
-            "You are a blockchain planning agent. Your job is to receive a structured intent object and convert it into a sequence of blockchain operation steps.\n"
-            "You must output a list of steps. Each step is a dictionary with a 'step' key and optional parameters.\n"
-            "Supported steps: check_balance, validate_address, send_transaction, fetch_transaction_history, read_contract.\n"
-            "Do not include any explanations. Only return the list."
-        )
-        super().__init__(name="PlannerAgent", system_message=system_message, **kwargs)
+        system_message = LLM_PROMPTS["PLANNER_AGENT_PROMPT"]
+        super().__init__(name="PlannerAgent", system_message=system_message, llm_config=ollama_llm_config, **kwargs)
+        
+        @self.register_for_llm(description="Plan the sequence of actions to execute the user's intent")
+        def plan(self) -> list[str]:
+            """
+            Plan the sequence of actions to execute the user's intent.
+            """
+            return []
+    
