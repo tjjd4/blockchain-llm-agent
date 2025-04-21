@@ -1,9 +1,0 @@
-# python PATH
-PYTHONPATH=.
-
-# blockchain rpc url
-# Etheruem
-ETH_RPC_URL=https://eth.llamarpc.com
-
-# Private Key
-ETH_ACCOUNT_PRIVATEKEY=

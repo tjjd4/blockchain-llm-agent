@@ -3,7 +3,7 @@ import json
 from autogen import UserProxyAgent
 
 from src.agent.planner_agent import PlannerAgent
-
+from src.utils.pydantic_types import Intent
 def is_termination_msg(message: dict) -> bool:
         try:
             data = json.loads(message["content"])
@@ -11,7 +11,7 @@ def is_termination_msg(message: dict) -> bool:
         except Exception:
             return False
 
-async def test_intent_agent_transfer():
+async def test_planner_agent_plan():
     user = UserProxyAgent(
         name="user", 
         max_consecutive_auto_reply=0,
@@ -23,24 +23,15 @@ async def test_intent_agent_transfer():
 
     )
     planner_agent = PlannerAgent()
-
-    intent_json = {
-        "intent": "User wants to check their DAI balance on Optimism and intends to send 10 DAI to a specified address.",
-        "info": {
-            "token": "DAI",
-            "amount": 10,
-            "to": "peter.eth",
-            "chain": "Optimism",
-            "from": "0x1234567890123456789012345678901234567890"
-        }
-    }
-
-    result = user.initiate_chat(
-        recipient=planner_agent,
-        message=json.dumps(intent_json),
-        max_turns=6,
+    user_input = "Do I have 10 DAI on Optimism? My address is 0x1234567890123456789012345678901234567890, I want to send 10 DAI to peter, his address is peter.eth"
+    user_intent = Intent(
+        intent="User wants to check their DAI balance on Optimism and intends to send 10 DAI to a specified address.",
+        chain="Optimism",
     )
-    print(result.summary)
+    
+    result = await planner_agent.plan(user_input, user_intent)
+    print("Result: ", result)
 
+    
 if __name__ == "__main__":
-    asyncio.run(test_intent_agent_transfer())
+    asyncio.run(test_planner_agent_plan())
