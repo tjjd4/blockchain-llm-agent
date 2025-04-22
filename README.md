@@ -34,7 +34,7 @@ This project implements an LLM-powered agent system for blockchain interactions.
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/tjjd4/blockchain-llm-agent.git
+git clone --recurse-submodules https://github.com/tjjd4/blockchain-llm-agent.git
 ```
 ### 2. Install dependencies (requirements to be added)
 ```bash

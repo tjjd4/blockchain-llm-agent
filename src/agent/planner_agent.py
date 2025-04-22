@@ -36,6 +36,7 @@ class PlannerAgent(BaseAgent):
         )
 
         await self.register_mcp_tools(mcp_cmd="node", mcp_args=["src/mcp/evm-mcp-server/build/index.js"], agents=[user_agent])
+        await self.register_mcp_tools(mcp_cmd="node", mcp_args=["src/mcp/bitcoin-mcp/build/cli.js"], agents=[user_agent])
         logger.info("[PlannerAgent] MCP tools registered")
         result = user_agent.initiate_chat(
             recipient=self,
