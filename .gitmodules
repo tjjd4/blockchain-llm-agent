@@ -1,0 +1,6 @@
+[submodule "src/mcp/bitcoin-mcp"]
+	path = src/mcp/bitcoin-mcp
+	url = https://github.com/AbdelStark/bitcoin-mcp.git
+[submodule "src/mcp/evm-mcp-server"]
+	path = src/mcp/evm-mcp-server
+	url = https://github.com/mcpdotdirect/evm-mcp-server.git
