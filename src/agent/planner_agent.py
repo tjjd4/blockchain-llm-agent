@@ -8,22 +8,14 @@ from src.utils.pydantic_types import Intent
 
 logger = logging.getLogger(__name__)
 
-ollama_llm_config = LLMConfig(
-    model= "mistral-nemo:12b-instruct-2407-q2_K",
-    api_type= "ollama",
-)
-
-openai_llm_config = LLMConfig(
-    model= "gpt-4o-mini",
-    api_type= "openai",
-    api_key= Config.OPENAI_API_KEY,
-)
-
+ollama_llm_config = Config.get_ollama_llm_config()
+openai_llm_config = Config.get_openai_llm_config()
+anthropic_llm_config = Config.get_anthropic_llm_config()
 
 class PlannerAgent(BaseAgent):
     def __init__(self, **kwargs):
         system_message = LLM_PROMPTS["PLANNER_AGENT_PROMPT"]
-        super().__init__(name="PlannerAgent", system_message=system_message, llm_config=ollama_llm_config, **kwargs)
+        super().__init__(name="PlannerAgent", system_message=system_message, llm_config=anthropic_llm_config, **kwargs)
 
 
     async def plan(self, user_input: str, intent: Intent) -> list[str]:

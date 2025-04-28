@@ -1,6 +1,8 @@
 import os
+from uu import Error
 from dotenv import load_dotenv
 from typing import Optional
+from autogen import LLMConfig
 
 # Load environment variables from .env file
 load_dotenv()
@@ -17,7 +19,8 @@ class Config:
         return value
     
     # API Keys
-    OPENAI_API_KEY: str = get_env("OPENAI_API_KEY")
+    OPENAI_API_KEY: str = get_env("OPENAI_API_KEY", "")
+    ANTHROPIC_API_KEY: str = get_env("ANTHROPIC_API_KEY", "")
     EVM_NETWORK: str = get_env("EVM_NETWORK", "mainnet")
     # Blockchain Configuration
     ETHEREUM_RPC_URL: str = get_env("ETHEREUM_RPC_URL", "https://eth.llamarpc.com")
@@ -29,3 +32,34 @@ class Config:
         valid_networks = ["mainnet", "testnet"]
         if cls.EVM_NETWORK not in valid_networks:
             raise ValueError(f"EVM_NETWORK must be one of {valid_networks}")
+
+    @classmethod
+    def get_ollama_llm_config(cls):
+        ollama_llm_config = LLMConfig(
+            model= "mistral-nemo:12b-instruct-2407-q2_K",
+            api_type= "ollama",
+        )
+        return ollama_llm_config
+
+    @classmethod
+    def get_openai_llm_config(cls):
+        if cls.OPENAI_API_KEY == "":
+            raise 
+        openai_llm_config = LLMConfig(
+            model= "gpt-4o-mini",
+            api_type= "openai",
+            api_key= cls.OPENAI_API_KEY,
+        )
+        return openai_llm_config
+
+    @classmethod
+    def get_anthropic_llm_config(cls):
+        if cls.ANTHROPIC_API_KEY == "":
+            raise 
+        anthropic_llm_config = LLMConfig(
+            model= "claude-3-7-sonnet-20250219",
+            api_type= "anthropic",
+            api_key= cls.ANTHROPIC_API_KEY,
+        )
+        return anthropic_llm_config
+
