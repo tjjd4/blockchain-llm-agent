@@ -1,10 +1,10 @@
-from autogen import LLMConfig, UserProxyAgent
+from autogen import UserProxyAgent
 import logging
 
 from .base_ag2_agent import BaseAgent
+from .user_agent import UserAgent
 from src.utils.prompt import LLM_PROMPTS
 from src.utils.config import Config
-from src.utils.pydantic_types import Intent
 
 logger = logging.getLogger(__name__)
 
@@ -18,22 +18,23 @@ class PlannerAgent(BaseAgent):
         super().__init__(name="PlannerAgent", system_message=system_message, llm_config=anthropic_llm_config, **kwargs)
 
 
-    async def plan(self, user_input: str, intent: Intent) -> list[str]:
-        user_agent = UserProxyAgent(
-            name="user",
+    async def plan(self, user_input: str) -> list[str]:
+        user_agent = UserAgent(
+            name="user_agent",
             human_input_mode="NEVER",
             code_execution_config = {
                 "use_docker": False
             },
         )
 
-        await self.register_mcp_tools(mcp_cmd="node", mcp_args=["src/mcp/evm-mcp-server/build/index.js"], agents=[user_agent])
-        await self.register_mcp_tools(mcp_cmd="node", mcp_args=["src/mcp/bitcoin-mcp/build/cli.js"], agents=[user_agent])
+        await self.register_mcp_tools_for_llm(mcp_cmd="node", mcp_args=["src/mcp/evm-mcp-server/build/index.js"], mode="stdio")
+        await user_agent.register_mcp_tools_for_execution(mcp_cmd="node", mcp_args=["src/mcp/evm-mcp-server/build/index.js"], mode="stdio")
+
         logger.info("[PlannerAgent] MCP tools registered")
-        result = user_agent.initiate_chat(
+        result = await user_agent.a_initiate_chat(
             recipient=self,
-            message=f"User input: {user_input}\nIntent: {intent}",
-            max_turns=2,
+            message=f"User input: {user_input}",
+            max_turns=4,
         )
         return result.summary
     

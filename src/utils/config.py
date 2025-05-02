@@ -24,6 +24,7 @@ class Config:
     EVM_NETWORK: str = get_env("EVM_NETWORK", "mainnet")
     # Blockchain Configuration
     ETHEREUM_RPC_URL: str = get_env("ETHEREUM_RPC_URL", "https://eth.llamarpc.com")
+    USE_API: str = get_env("USE_API", "ollama")
     
     @classmethod
     def validate(cls) -> None:
@@ -63,3 +64,14 @@ class Config:
         )
         return anthropic_llm_config
 
+    @classmethod
+    def get_llm_config(cls):
+        if cls.USE_API == "ollama":
+            return Config.get_ollama_llm_config()
+        elif cls.USE_API == "openai":
+            return Config.get_openai_llm_config()
+        elif cls.USE_API == "anthropic":
+            return Config.get_anthropic_llm_config()
+        else:
+            raise ValueError(f"Invalid API: {cls.USE_API}")
+    

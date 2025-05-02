@@ -1492,6 +1492,7 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d1/25/977ff23b28789f17a4fbc2c009805e55ec0cb8a6ab309beebc07a8c5ceff/pyautogen-0.9.tar.gz", hash = "sha256:58763009b6f6f988cdf9bb908c56a61a60c16e772096ab621edf06748fa58e50", size = 3255051, upload_time = "2025-04-25T00:11:21.462Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a9/7a/2ba1e2787340ed2650d9b4d030c48e5b40b0c08cb8a86716799062c037e1/pyautogen-0.9-py3-none-any.whl", hash = "sha256:b4bef3cc0aee1aa71959aea39b53001a62326682e6f23acb036f90212b3baf5d", size = 781663, upload_time = "2025-04-25T00:11:18.242Z" },
+    { url = "https://files.pythonhosted.org/packages/fb/eb/ceb8c7d04d7d453472282ce40a833a7fe09f2e751dad53ad88f60199b5e9/pyautogen-0.9.0-py3-none-any.whl", hash = "sha256:88be3538fb98fc443d05ec0f6b1e95660a1dffe10d9769067ba699fac8155a4a", size = 781684, upload_time = "2025-04-28T09:41:12.585Z" },
 ]
 
 [package.optional-dependencies]
